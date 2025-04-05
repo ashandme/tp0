@@ -30,9 +30,7 @@ int iniciar_servidor(void)
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
 
-  char port[4];
-  sprintf(port, "%d", PUERTO);
-  getaddrinfo(NULL, port, &hints, &servinfo);
+  getaddrinfo(NULL, PUERTO, &hints, &servinfo);
   // Creamos el socket de escucha del servidor
   socket_servidor = socket(servinfo->ai_family,
                            servinfo->ai_socktype,

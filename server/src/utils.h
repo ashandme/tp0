@@ -11,8 +11,7 @@
 #include<string.h>
 #include<assert.h>
 
-#define PUERTO 4444 // NO FUNCA
-//const char PUERTO[4]= "4444";
+#define PUERTO "4444"
 
 typedef enum
 {
