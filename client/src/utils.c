@@ -32,8 +32,17 @@ int crear_conexion(char *ip, char* puerto)
 	int socket_cliente = 0;
 
 	// Ahora que tenemos el socket, vamos a conectarlo
+        socket_cliente = socket(server_info->ai_family,
+                         server_info->ai_socktype,
+                         server_info->ai_protocol);
+        connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
+        size_t bytes;
 
+        int32_t handshake = 1;
+        int32_t result;
 
+        bytes = send(socket_cliente, &handshake, sizeof(int32_t), 0);
+        bytes = recv(socket_cliente, &result, sizeof(int32_t), MSG_WAITALL);
 	freeaddrinfo(server_info);
 
 	return socket_cliente;

@@ -1,45 +1,69 @@
 #include"utils.h"
 
 t_log* logger;
+/*
+  Consigna
+
+  El entregable de esta etapa es enviar al servidor el valor de CLAVE en el archivo de configuración, y luego enviarle todas las líneas que se ingresaron por consola juntas en un paquete.
+
+  Simplificando un poco, una conexión por socket hacia otro programa va a requerir de realizar lo siguiente:
+
+  - Iniciar el servidor en la función iniciar_servidor() del utils del server.
+  - Esperar a que el cliente se conecte mediante la función esperar_cliente()
+  - Crear una conexión contra el servidor en la función crear_conexión() del utils del client.
+  - Enviar como mensaje el valor de CLAVE.
+  - Ir juntando las líneas que se leen por consola para luego enviarlas como paquete.
+  - Cerrar la conexión.
+ */
 
 int iniciar_servidor(void)
 {
-	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
+  // Quitar esta línea cuando hayamos terminado de implementar la funcion
+  // assert(!"no implementado!");
 
-	int socket_servidor;
+  int socket_servidor;
 
-	struct addrinfo hints, *servinfo, *p;
+  struct addrinfo hints, *servinfo, *p;
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_PASSIVE;
 
-	getaddrinfo(NULL, PUERTO, &hints, &servinfo);
+  char port[4];
+  sprintf(port, "%d", PUERTO);
+  getaddrinfo(NULL, port, &hints, &servinfo);
+  // Creamos el socket de escucha del servidor
+  socket_servidor = socket(servinfo->ai_family,
+                           servinfo->ai_socktype,
+                           servinfo->ai_protocol);
+  // Asociamos el socket a un puerto
+  setsockopt(socket_servidor, SOL_SOCKET , SO_REUSEPORT, &(int){1}, sizeof(int));
 
-	// Creamos el socket de escucha del servidor
+  bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+  // Escuchamos las conexiones entrantes
+  if (listen(socket_servidor, SOMAXCONN) < 0){
+    log_error(logger, "chau");
+    return -1;
+  };
+  freeaddrinfo(servinfo);
+  log_trace(logger, "Listo para escuchar a mi cliente");
 
-	// Asociamos el socket a un puerto
-
-	// Escuchamos las conexiones entrantes
-
-	freeaddrinfo(servinfo);
-	log_trace(logger, "Listo para escuchar a mi cliente");
-
-	return socket_servidor;
+  return socket_servidor;
 }
 
 int esperar_cliente(int socket_servidor)
 {
-	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
+  // Quitar esta línea cuando hayamos terminado de implementar la funcion
+  //assert(!"no implementado!");
+  // Aceptamos un nuevo cliente
+  int socket_cliente;
+  while(socket_servidor){
+    socket_servidor = accept(socket_cliente, NULL, NULL);
+  }
+  log_info(logger, "Se conecto un cliente!");
 
-	// Aceptamos un nuevo cliente
-	int socket_cliente;
-	log_info(logger, "Se conecto un cliente!");
-
-	return socket_cliente;
+  return socket_cliente;
 }
 
 int recibir_operacion(int socket_cliente)
